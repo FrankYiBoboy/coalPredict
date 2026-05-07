@@ -1,0 +1,26 @@
+{
+    "Material": {
+        "AcrylicBlurRadius": 19
+    },
+    "Update": {
+        "CheckUpdateAtStartUp": false
+    },
+    "Folders": {
+        "Download": "D:/Project/Python/Fu/PyQt-Fluent-Widgets/examples/gallery/app/download",
+        "LocalMusic": []
+    },
+    "MainWindow": {
+        "DpiScale": 1.25,
+        "Language": "zh_CN",
+        "MicaEnabled": false
+    },
+    "QFluentWidgets": {
+        "FontFamilies": [
+            "STHeiti",
+            "Microsoft YaHei",
+            "PingFang SC"
+        ],
+        "ThemeColor": "#ff009faa",
+        "ThemeMode": "Light"
+    }
+}
