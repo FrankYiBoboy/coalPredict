@@ -68,12 +68,17 @@ class MainWindow(FluentWindow):
     def initWindow(self):
         self.resize(1160, 780)
         self.setMinimumWidth(760)
-        self.setWindowIcon(QIcon(':/gallery/images/InsLogo.png'))
+        self.setWindowIcon(QIcon(':/gallery/images/Logo.png'))
         self.setWindowTitle('煤矿采空区油气井施工预测软件')
 
         self.setMicaEffectEnabled(cfg.get(cfg.micaEnabled))
 
         # create splash screen
+        
+        # self.splashIcon = QIcon(':/gallery/images/splash_img.png')
+        # # 实例化
+        # self.splashScreen = SplashScreen(self.splashIcon, self)
+        # self.splashScreen.setIconSize(QSize(960, 580))
         self.splashScreen = SplashScreen(self.windowIcon(), self)
         self.splashScreen.setIconSize(QSize(106, 106))
         self.splashScreen.raise_()

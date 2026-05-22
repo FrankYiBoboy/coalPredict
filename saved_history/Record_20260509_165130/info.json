@@ -1,0 +1,58 @@
+{
+    "timestamp": "2026-05-09 16:51:30",
+    "face_count": 2,
+    "faces": [
+        {
+            "name": "工作面",
+            "x_range": [
+                0.0,
+                1800.0
+            ],
+            "y_range": [
+                0.0,
+                250.0
+            ],
+            "params": {
+                "H": 120.0,
+                "m": 4.0,
+                "alpha": 5.0,
+                "q": 0.82,
+                "tan_beta": 2.1,
+                "songSan": 0,
+                "baseThickness": 0,
+                "baseYieldStrength": 0,
+                "frictionAngle": 0,
+                "keyLayerPosition": 0,
+                "horizontalMovement": 0
+            }
+        },
+        {
+            "name": "工作面2",
+            "x_range": [
+                2200.0,
+                4400.0
+            ],
+            "y_range": [
+                0.0,
+                280.0
+            ],
+            "params": {
+                "H": 180.0,
+                "m": 5.5,
+                "alpha": 6.0,
+                "q": 0.78,
+                "tan_beta": 1.8,
+                "songSan": 0,
+                "baseThickness": 0,
+                "baseYieldStrength": 0,
+                "frictionAngle": 0,
+                "keyLayerPosition": 0,
+                "horizontalMovement": 0
+            }
+        }
+    ],
+    "obs_line": {
+        "start": "(0, 120)",
+        "end": "(4400, 120)"
+    }
+}

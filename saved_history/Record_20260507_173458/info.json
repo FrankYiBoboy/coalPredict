@@ -1,0 +1,34 @@
+{
+    "timestamp": "2026-05-07 17:34:58",
+    "face_count": 1,
+    "faces": [
+        {
+            "name": "Face",
+            "x_range": [
+                0.0,
+                1600.0
+            ],
+            "y_range": [
+                0.0,
+                220.0
+            ],
+            "params": {
+                "H": 150.0,
+                "m": 3.8,
+                "alpha": 4.0,
+                "q": 0.8,
+                "tan_beta": 2.3,
+                "songSan": 0,
+                "baseThickness": 0,
+                "baseYieldStrength": 0,
+                "frictionAngle": 0,
+                "keyLayerPosition": 0,
+                "horizontalMovement": 0
+            }
+        }
+    ],
+    "obs_line": {
+        "start": "(0, 110)",
+        "end": "(1600, 110)"
+    }
+}

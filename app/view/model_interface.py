@@ -1,7 +1,7 @@
 # coding:utf-8
 from PyQt5.QtGui import QColor
 from PyQt5.QtCore import Qt,QThread, pyqtSignal
-from PyQt5.QtWidgets import QAction  # 需要导入 QAction
+from PyQt5.QtWidgets import QAction,QFileDialog # 需要导入 QAction
 from PyQt5.QtPrintSupport import QPrinter, QPrintDialog # 导入打印支持
 from PyQt5.QtGui import QPainter # 导入绘图笔
 
@@ -23,7 +23,7 @@ from scipy import integrate
 import os
 import json
 import datetime
-import shutil
+import pandas as pd
 
 # ==========================================================
 # 1. 定义工作线程类
@@ -106,17 +106,24 @@ class CalculationWorker(QThread):
 # 过滤 toolitems，只保留配置名为 'Save' 的项
 class SaveAndPrintToolbar(NavigationToolbar):
     # 1. 过滤默认工具，只保留 'Save'
-    toolitems = [t for t in NavigationToolbar.toolitems if t[0] == 'Save']
-
-    def __init__(self, canvas, parent=None):
+    # toolitems = [t for t in NavigationToolbar.toolitems if t[0] == 'Save']
+    toolitems = [('Save', '保存图片', 'filesave', 'save_figure')]
+    def __init__(self, canvas, parent=None,export_data=None):
         super().__init__(canvas, parent)
-        # 3. 手动添加“打印”动作
-        self.print_action = QAction(self)
+        # 接收从绘图传来的等值线数据
+        self.export_data = export_data
+        # 添加“打印”动作
+        self.print_action = QAction("打印图片",self)
         # 添加图标
         self.print_action.setIcon(FluentIcon.PRINT.icon())
         self.print_action.triggered.connect(self.print_graph)
         self.addAction(self.print_action)
 
+        if self.export_data:
+            self.export_action = QAction("导出数据",self)
+            self.export_action.setIcon(FluentIcon.DOCUMENT.icon())
+            self.export_action.triggered.connect(self.export_to_excel)
+            self.addAction(self.export_action)
     def print_graph(self):
         """处理打印逻辑"""
         printer = QPrinter(QPrinter.HighResolution)
@@ -142,6 +149,46 @@ class SaveAndPrintToolbar(NavigationToolbar):
             painter.drawPixmap(0, 0, pixmap)
             painter.end()   
 
+    def export_to_excel(self):
+        """处理导出 Excel 逻辑"""
+        if not self.export_data:
+            InfoBar.warning(
+                title="提示",
+                content="没有可导出的数据", 
+                orient=Qt.Horizontal,
+                position=InfoBarPosition.TOP,
+                duration=2000,
+                parent=self.window())
+            return          
+        # 弹出保存文件对话框
+        file_path, _ = QFileDialog.getSaveFileName(
+            self, 
+            "保存等值线数据为 Excel", 
+            "等值线数据.xlsx", 
+            "Excel Files (*.xlsx);;All Files (*)"
+        )
+        
+        if file_path:
+            try:
+                # 使用 pandas 写入 Excel
+                df = pd.DataFrame(self.export_data)
+                df.to_excel(file_path, index=False, engine='openpyxl')
+                InfoBar.success(
+                    title="导出成功", 
+                    content=f"数据已成功保存至：{file_path}", 
+                    orient=Qt.Horizontal,
+                    position=InfoBarPosition.TOP_RIGHT,
+                    duration=2000,
+                    parent=self.window())
+            except Exception as e:
+                InfoBar.error(
+                    title="导出失败", 
+                    content=f"导出过程中发生错误：{str(e)}",
+                    orient=Qt.Horizontal,
+                    position=InfoBarPosition.TOP_RIGHT,
+                    duration=2000,
+                    parent=self.window())
+    
 class ModelInterface(Ui_form,GalleryInterface):
     """ Text interface """
     def __init__(self, parent=None):
@@ -270,8 +317,11 @@ class ModelInterface(Ui_form,GalleryInterface):
         )
         curvesCanvas = FigureCanvas(figCurves)
         
+        # 提取曲线数据并初始化工具栏
+        curve_export_data = getattr(figCurves, 'curve_export_data', None)
+        
         # 添加保存按钮
-        curvesToolbar = SaveAndPrintToolbar(curvesCanvas, self.pageContour)
+        curvesToolbar = SaveAndPrintToolbar(curvesCanvas, self.pageContour,export_data=curve_export_data)
         
         self.clear_layout(self.contourLayout)
         self.contourLayout.addWidget(curvesToolbar)

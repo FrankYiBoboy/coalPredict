@@ -137,6 +137,14 @@ class SubsidenceVisualizer:
         t_stable = self.solver.calculate_stable_time(max_w_val)
         # ---------------------------
 
+        # 2. 初始化导出数据结构
+        curve_export_data = []
+        for i in range(len(distances)):
+            curve_export_data.append({
+                "测点位置 (m)": round(distances[i],2),
+                "最终下沉量 W_final (m)": round(w_finals[i],4)
+            })
+        
         # 3. 创建画布
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8), sharex=True)
         
@@ -152,6 +160,11 @@ class SubsidenceVisualizer:
             else:
                 w_t = w_finals * (1 - np.exp(-c * t))
                 v_t = w_finals * c * np.exp(-c * t)
+            
+            # 将不同时间节点的数据追加到字典中
+            for i in range(len(distances)):
+                curve_export_data[i][f"T={t}个月 下沉量 (m)"] = round(w_t[i], 4)
+                curve_export_data[i][f"T={t}个月 下沉速度 (m/月)"] = round(v_t[i],5)
             
             marker = markers[idx % len(markers)]
             color = colors[idx]
@@ -201,6 +214,7 @@ class SubsidenceVisualizer:
         ax2.grid(True, linestyle='--', alpha=0.5)
 
         plt.tight_layout()
+        fig.curve_export_data = curve_export_data
         return fig
     
     def plot_2d_contour_and_gob(self, x_range, y_range, grid_density=50, independent_scale=False, pre_calculated_data=None):
@@ -218,7 +232,15 @@ class SubsidenceVisualizer:
         # --- 1. 初始化绘图环境 (PyQt 适配) ---
         fig = Figure(figsize=(10, 5))
         ax = fig.add_subplot(111)
-        ax.set_facecolor('#f5f5f5') # 浅灰背景
+    
+        # ax.set_facecolor('#f5f5f5') # 浅灰背景
+        # 更换背景 蓝灰色
+        bg_color = '#CFD8DC' 
+        ax.set_facecolor(bg_color)
+        # 添加斜线填充
+        ax.patch.set_edgecolor('#90A4AE') 
+        # 添加地质体常用的斜线填充符号
+        ax.patch.set_hatch('///')
 
         face_results = []
         global_max_w = 0.0
@@ -293,6 +315,39 @@ class SubsidenceVisualizer:
                                    face.y_end - face.y_start, 
                                    linewidth=2, edgecolor='black', facecolor='none')
             ax.add_patch(rect)
+            
+            # 框选主要沉陷区域
+            # 采用 50% 最大下沉量作为核心沉陷盆地的理论边界
+            if local_max > 0.001:  # 确保该区域有实质性下沉
+                threshold = local_max * 0.7
+                mask = Z_local >= threshold
+                
+                if np.any(mask):
+                    # 获取符合条件的网格点行列索引
+                    rows, cols = np.where(mask)
+                    
+                    # 从网格 X, Y 中获取对应的实际物理坐标边界
+                    x_min_main = X[0, np.min(cols)]
+                    x_max_main = X[0, np.max(cols)]
+                    y_min_main = Y[np.min(rows), 0]
+                    y_max_main = Y[np.max(rows), 0]
+                    
+                    # 绘制高亮虚线框
+                    main_rect = patches.Rectangle(
+                        (x_min_main, y_min_main), 
+                        x_max_main - x_min_main, 
+                        y_max_main - y_min_main, 
+                        linewidth=1.5, 
+                        edgecolor='#FF3B30', # 苹果设计的亮红色，保证美观
+                        linestyle='--', 
+                        facecolor='none'
+                    )
+                    ax.add_patch(main_rect)
+                    
+                    # 添加一个专业的小标注，放置在虚线框左上角
+                    # ax.text(x_min_main, y_max_main + 5, '主要沉陷区', 
+                    #         color='#FF3B30', fontsize=8, fontweight='bold', 
+                    #         verticalalignment='bottom')
             
             # 标签
             label_text = f"{face.id}"
