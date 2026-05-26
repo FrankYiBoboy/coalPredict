@@ -123,5 +123,6 @@ class Ui_Login(object):
         self.loginButton.setText(_translate("Login", "登录"))
         self.fondButton.setText(_translate("Login", "找回密码"))
         self.regButton.setText(_translate("Login", "注册"))
+        
 from qfluentwidgets import CheckBox, LineEdit, PrimaryPushButton, PushButton
 
