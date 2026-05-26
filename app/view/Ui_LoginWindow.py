@@ -1,10 +1,10 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from qfluentwidgets import CheckBox, LineEdit, PrimaryPushButton, HyperlinkButton, TitleLabel,Action, FluentIcon
 
 class Ui_Login(object):
     def setupUi(self, Login):
         Login.setObjectName("Login")
-        Login.resize(1020, 705)
+        Login.resize(1160, 780)
         Login.setMinimumSize(QtCore.QSize(700, 500))
         self.horizontalLayout = QtWidgets.QHBoxLayout(Login)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
@@ -16,6 +16,8 @@ class Ui_Login(object):
         self.label.setScaledContents(True)
         self.label.setObjectName("label")
         self.horizontalLayout.addWidget(self.label)
+        
+        # 右侧表单容器
         self.widget = QtWidgets.QWidget(Login)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -24,16 +26,28 @@ class Ui_Login(object):
         self.widget.setSizePolicy(sizePolicy)
         self.widget.setMinimumSize(QtCore.QSize(360, 0))
         self.widget.setMaximumSize(QtCore.QSize(360, 16777215))
-        self.widget.setStyleSheet("QLabel{\n"
-"    font: 13px \'Microsoft YaHei\'\n"
-"}")
         self.widget.setObjectName("widget")
+        
+        self.widget.setStyleSheet("""
+            QWidget#widget {
+                background-color: rgba(255, 255, 255, 160); 
+                border-left: 1.5px solid rgba(255, 255, 255, 220); 
+                border-top-left-radius: 20px; 
+                border-bottom-left-radius: 20px;
+            }
+        """)
+        
+        # 右侧垂直布局
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.widget)
-        self.verticalLayout_2.setContentsMargins(20, 20, 20, 20)
-        self.verticalLayout_2.setSpacing(9)
+        self.verticalLayout_2.setContentsMargins(35, 20, 35, 20)
+        self.verticalLayout_2.setSpacing(15)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
+        
+        # 顶部弹簧
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem)
+        
+        # logo
         self.label_2 = QtWidgets.QLabel(self.widget)
         self.label_2.setEnabled(True)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
@@ -41,70 +55,85 @@ class Ui_Login(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label_2.sizePolicy().hasHeightForWidth())
         self.label_2.setSizePolicy(sizePolicy)
-        self.label_2.setMinimumSize(QtCore.QSize(100, 100))
-        self.label_2.setMaximumSize(QtCore.QSize(100, 100))
+        self.label_2.setMinimumSize(QtCore.QSize(90, 90))
+        self.label_2.setMaximumSize(QtCore.QSize(90, 90))
         self.label_2.setText("")
         self.label_2.setPixmap(QtGui.QPixmap(":/gallery/images/Logo.png"))
         self.label_2.setScaledContents(True)
         self.label_2.setObjectName("label_2")
         self.verticalLayout_2.addWidget(self.label_2, 0, QtCore.Qt.AlignHCenter)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        
+        spacerItem1 = QtWidgets.QSpacerItem(20, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         self.verticalLayout_2.addItem(spacerItem1)
-        self.welcomeButton = QtWidgets.QPushButton(self.widget)
-        font = QtGui.QFont()
-        font.setFamily("楷体")
-        font.setPointSize(27)
-        font.setBold(True)
-        font.setItalic(True)
-        font.setWeight(75)
-        self.welcomeButton.setFont(font)
-        self.welcomeButton.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
-        self.welcomeButton.setStyleSheet("#welcomeButton{\n"
-"    border:none;\n"
-"}\n"
-"#welcomeButton{\n"
-"    color: rgb(83, 166, 249);\n"
-"}")
-        self.welcomeButton.setObjectName("welcomeButton")
-        self.verticalLayout_2.addWidget(self.welcomeButton)
-        self.label_5 = QtWidgets.QLabel(self.widget)
-        self.label_5.setObjectName("label_5")
-        self.verticalLayout_2.addWidget(self.label_5)
+        
+        # 欢迎标题
+        self.welcomeLabel = TitleLabel(self.widget)
+        self.welcomeLabel.setObjectName("welcomeLabel")
+        self.verticalLayout_2.addWidget(self.welcomeLabel, 0, QtCore.Qt.AlignHCenter)
+        
+        spacerItem2 = QtWidgets.QSpacerItem(20, 25, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        self.verticalLayout_2.addItem(spacerItem2)
+        
+        # 用户名输入框
         self.userEdit = LineEdit(self.widget)
         self.userEdit.setClearButtonEnabled(True)
+        # 添加图标
+        self.userEdit.addAction(Action(FluentIcon.PEOPLE, 'User'), QtWidgets.QLineEdit.LeadingPosition)
         self.userEdit.setObjectName("userEdit")
         self.verticalLayout_2.addWidget(self.userEdit)
-        self.label_6 = QtWidgets.QLabel(self.widget)
-        self.label_6.setObjectName("label_6")
-        self.verticalLayout_2.addWidget(self.label_6)
+        
+        # 密码输入框
         self.passwordEdit = LineEdit(self.widget)
         self.passwordEdit.setEchoMode(QtWidgets.QLineEdit.Password)
         self.passwordEdit.setClearButtonEnabled(True)
+        # 添加图标
+        self.passwordEdit.addAction(Action(FluentIcon.FINGERPRINT, 'Password'), QtWidgets.QLineEdit.LeadingPosition)
         self.passwordEdit.setObjectName("passwordEdit")
         self.verticalLayout_2.addWidget(self.passwordEdit)
-        spacerItem2 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
-        self.verticalLayout_2.addItem(spacerItem2)
+        
+        # 记住密码复选框
         self.checkBox = CheckBox(self.widget)
         self.checkBox.setChecked(True)
         self.checkBox.setObjectName("checkBox")
         self.verticalLayout_2.addWidget(self.checkBox)
-        spacerItem3 = QtWidgets.QSpacerItem(20, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        
+        spacerItem3 = QtWidgets.QSpacerItem(20, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         self.verticalLayout_2.addItem(spacerItem3)
+        
+        # 登录按钮
         self.loginButton = PrimaryPushButton(self.widget)
+        self.loginButton.setMinimumHeight(35) 
         self.loginButton.setObjectName("loginButton")
         self.verticalLayout_2.addWidget(self.loginButton)
-        spacerItem4 = QtWidgets.QSpacerItem(20, 6, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        
+        spacerItem4 = QtWidgets.QSpacerItem(20, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         self.verticalLayout_2.addItem(spacerItem4)
-        self.fondButton = PrimaryPushButton(self.widget)
-        self.fondButton.setObjectName("fondButton")
-        self.verticalLayout_2.addWidget(self.fondButton)
-        spacerItem5 = QtWidgets.QSpacerItem(20, 6, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
-        self.verticalLayout_2.addItem(spacerItem5)
-        self.regButton = PushButton(self.widget)
+        
+        # 水平布局放置“注册”与“找回密码”
+        self.horizontalLayout_actions = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_actions.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_actions.setObjectName("horizontalLayout_actions")
+        
+        # 注册按钮
+        self.regButton = HyperlinkButton(self.widget)
         self.regButton.setObjectName("regButton")
-        self.verticalLayout_2.addWidget(self.regButton)
+        self.horizontalLayout_actions.addWidget(self.regButton)
+        
+        # 中间弹簧推开两侧
+        spacerItem_actions = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_actions.addItem(spacerItem_actions)
+        
+        # 找回密码按钮
+        self.fondButton = HyperlinkButton(self.widget)
+        self.fondButton.setObjectName("fondButton")
+        self.horizontalLayout_actions.addWidget(self.fondButton)
+        
+        self.verticalLayout_2.addLayout(self.horizontalLayout_actions)
+        
+        # 底部弹簧
         spacerItem6 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem6)
+        
         self.horizontalLayout.addWidget(self.widget)
 
         self.retranslateUi(Login)
@@ -112,17 +141,12 @@ class Ui_Login(object):
 
     def retranslateUi(self, Login):
         _translate = QtCore.QCoreApplication.translate
-        Login.setWindowTitle(_translate("Login", "Form"))
-        self.welcomeButton.setText(_translate("Login", "欢迎使用"))
-        self.label_5.setText(_translate("Login", "用户名"))
-        self.userEdit.setPlaceholderText(_translate("Login", "example@example.com"))
-        self.label_6.setText(_translate("Login", "密码"))
-        self.passwordEdit.setPlaceholderText(_translate("Login", "••••••••••••"))
+        Login.setWindowTitle(_translate("Login", "系统登录 - 矿业沉陷预测"))
+        self.welcomeLabel.setText(_translate("Login", "欢迎使用"))
+        self.userEdit.setPlaceholderText(_translate("Login", "请输入用户名 / 邮箱"))
+        self.passwordEdit.setPlaceholderText(_translate("Login", "请输入密码"))
         self.checkBox.setText(_translate("Login", "记住密码"))
-        self.loginButton.setToolTip(_translate("Login", "点击登录"))
-        self.loginButton.setText(_translate("Login", "登录"))
-        self.fondButton.setText(_translate("Login", "找回密码"))
-        self.regButton.setText(_translate("Login", "注册"))
-        
-from qfluentwidgets import CheckBox, LineEdit, PrimaryPushButton, PushButton
-
+        self.loginButton.setToolTip(_translate("Login", "点击登录系统"))
+        self.loginButton.setText(_translate("Login", "登 录"))
+        self.regButton.setText(_translate("Login", "注册账号"))
+        self.fondButton.setText(_translate("Login", "忘记密码？"))
