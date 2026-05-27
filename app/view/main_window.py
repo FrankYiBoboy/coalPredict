@@ -69,7 +69,7 @@ class MainWindow(FluentWindow):
         self.resize(1160, 780)
         self.setMinimumWidth(760)
         self.setWindowIcon(QIcon(':/gallery/images/Logo.png'))
-        self.setWindowTitle('煤矿采空区油气井施工预测软件')
+        self.setWindowTitle('煤矿开采覆岩运移预测软件')
 
         self.setMicaEffectEnabled(cfg.get(cfg.micaEnabled))
 

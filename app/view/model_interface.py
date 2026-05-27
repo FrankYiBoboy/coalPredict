@@ -16,6 +16,7 @@ import matplotlib
 matplotlib.use('Qt5Agg')
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+from app.common.session import SessionManager
 
 import numpy as np
 from scipy import integrate
@@ -541,15 +542,19 @@ class ModelInterface(Ui_form,GalleryInterface):
         :param faces_objects: 参与计算的工作面对象列表
         """
         try:
-            # 1. 创建基础目录
-            base_dir = "saved_history"
-            if not os.path.exists(base_dir):
-                os.makedirs(base_dir)
+            # 动态获取用户目录
+            user_base_dir = SessionManager.get_user_history_path()
+            
+            
+            # # 1. 创建基础目录
+            # base_dir = "saved_history"
+            # if not os.path.exists(base_dir):
+            #     os.makedirs(base_dir)
             
             # 2. 创建当前记录的子目录
             current_time = datetime.datetime.now()
             timestamp = current_time.strftime("%Y%m%d_%H%M%S")
-            record_dir = os.path.join(base_dir, f"Record_{timestamp}")
+            record_dir = os.path.join(user_base_dir, f"Record_{timestamp}")
             os.makedirs(record_dir)
             
             # 3. 收集参数 (支持多工作面)

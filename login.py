@@ -7,8 +7,10 @@ from qfluentwidgets import setThemeColor, FluentTranslator, InfoBar, InfoBarIcon
 from PyQt5.QtGui import QIcon, QPainter, QPixmap
 
 from app.common.config import cfg
+from app.common.session import SessionManager
 from app.view.main_window import MainWindow
 from app.view.Ui_LoginWindow import Ui_Login
+from app.common.auth import AuthManager
 
 import app.common.resource
 
@@ -99,14 +101,22 @@ class loginWindow(FramelessWindow, Ui_Login):
     def loginClicked(self):
         user = self.userEdit.text()
         password = self.passwordEdit.text()
-        userContent = "admin"
-        passwordContent = "123456"
 
+        # 校验输入是否为空
+        if not user or not password:
+            self.creatErrorBar() # 或者你可以专门写一个提示“请输入完整”的 InfoBar
+            return
+        
+        # 调用脚本验证用户名密码
+        is_valid = AuthManager.verify_login(user, password)
         # 用户名密码正确关闭登录界面切换到主页
-        if user == userContent and password == passwordContent:
+        if is_valid:
+            # 拦截写入全局状态
+            SessionManager.set_current_user(user)
+            
+            self.close()
             showWindow = MainWindow()
             showWindow.show()
-            self.close()
         else:
             self.creatErrorBar()
 
@@ -139,6 +149,5 @@ if __name__ == '__main__':
     app.installTranslator(galleryTranslator)
     # 显示界面
     w = loginWindow()
-    # showWindow = MainWindow()
     w.show()
     app.exec_()

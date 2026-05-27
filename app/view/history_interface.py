@@ -10,7 +10,7 @@ from qfluentwidgets import (CardWidget, StrongBodyLabel, BodyLabel,
                             CaptionLabel, SubtitleLabel, FluentIcon)
 
 from .gallery_interface import GalleryInterface
-
+from app.common.session import SessionManager
 
 # ==========================================
 # 可点击的图片标签
@@ -217,7 +217,9 @@ class HistoryInterface(GalleryInterface):
     def loadHistory(self):
         self.clearLayout(self.scrollLayout)
         
-        base_dir = "saved_history"
+        # base_dir = "saved_history"
+        # 获取当前用户目录
+        base_dir = SessionManager.get_user_history_path()
         if not os.path.exists(base_dir):
             self.showEmptyState()
             return
