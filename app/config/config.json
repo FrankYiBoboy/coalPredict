@@ -6,7 +6,6 @@
         "CheckUpdateAtStartUp": false
     },
     "Folders": {
-        "Download": "D:/Project/Python/Fu/PyQt-Fluent-Widgets/examples/gallery/app/download",
         "LocalMusic": []
     },
     "MainWindow": {
@@ -20,7 +19,7 @@
             "Microsoft YaHei",
             "PingFang SC"
         ],
-        "ThemeColor": "#ff009faa",
+        "ThemeColor": "#ff90e9d4",
         "ThemeMode": "Light"
     }
 }

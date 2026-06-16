@@ -1,7 +1,7 @@
 import sys
 import os
 from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import Qt, QTranslator
+from PyQt5.QtCore import Qt, QTranslator, pyqtSignal, QSettings
 from qframelesswindow import FramelessWindow, StandardTitleBar
 from qfluentwidgets import setThemeColor, FluentTranslator, InfoBar, InfoBarIcon, InfoBarPosition, FluentIcon, MessageBox
 from PyQt5.QtGui import QIcon, QPainter, QPixmap
@@ -16,7 +16,8 @@ import app.common.resource
 
 
 class loginWindow(FramelessWindow, Ui_Login):
-
+    # 定义信号
+    login_success_signal = pyqtSignal()
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -53,6 +54,21 @@ class loginWindow(FramelessWindow, Ui_Login):
         self.regButton.clicked.connect(self.createRegistInfoBar)
         self.loginButton.clicked.connect(self.loginClicked)
 
+        # 读取配置并预填充页面
+        self.settings = QSettings("CoalPredict_Org", "CoalPredictApp")
+        saved_user = self.settings.value("remember_user")
+        saved_token = self.settings.value("remember_token")
+        
+        if saved_user and saved_token:
+            # 如果存在本地保存的记录，填充用户名
+            self.userEdit.setText(saved_user)
+            # 填充 8 个星号作为视觉伪装，无需填写真实密码
+            self.passwordEdit.setText("********")
+            self.checkBox.setChecked(True)
+        else:
+            self.checkBox.setChecked(False)
+            
+            
     # 设置找回密码弹窗
     def createFondInfoBar(self):
         content = "密码丢失请联系管理员,暂不支持在线修改。"
@@ -108,23 +124,47 @@ class loginWindow(FramelessWindow, Ui_Login):
             return
         
         # 调用脚本验证用户名密码
-        is_valid = AuthManager.verify_login(user, password)
+        # is_valid = AuthManager.verify_login(user, password)
+        # 分支验证
+        is_valid = False
+        if password == "********":
+            # 用户没有修改密码框，使用的是“记住密码”的 Token 凭证
+            saved_token = self.settings.value("remember_token")
+            # 调用 AuthManager 的 Token 校验方法
+            is_valid = AuthManager.verify_auto_login_token(user, saved_token)
+        else:
+            # 密码不是占位符，说明用户手动输入了新密码
+            # 走正常的密码 Hash 校验流程
+            is_valid = AuthManager.verify_login(user, password)
+         
         # 用户名密码正确关闭登录界面切换到主页
         if is_valid:
             # 拦截写入全局状态
             SessionManager.set_current_user(user)
+            # 处理记住密码逻辑
+            if self.checkBox.isChecked():
+                # 只有在手动输入真实密码时，才需要重新生成 Token 并保存
+                if password != "********":
+                    raw_token = AuthManager.create_auto_login_token(user)
+                    self.settings.setValue("remember_user", user)
+                    self.settings.setValue("remember_token", raw_token)
+                pass
+            else:
+                # 如果用户没有勾选，则清除之前可能存在的本地配置
+                self.settings.remove("remember_user")
+                self.settings.remove("remember_token")
             
+            # 发送登录成功信号
+            self.login_success_signal.emit()
             self.close()
-            showWindow = MainWindow()
-            showWindow.show()
         else:
             self.creatErrorBar()
 
-
-
 if __name__ == '__main__':
     
-
+    # 启动自检用户
+    AuthManager.init_system()
+    
     if cfg.get(cfg.dpiScale) == "Auto":
         QApplication.setHighDpiScaleFactorRoundingPolicy(
             Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
@@ -148,6 +188,14 @@ if __name__ == '__main__':
     app.installTranslator(translator)
     app.installTranslator(galleryTranslator)
     # 显示界面
+    main_window = None
+    # 定义登录成功槽函数
+    def on_login_success():
+        global main_window
+        main_window = MainWindow()
+        main_window.show()
+    # 实例化并显示登录窗口
     w = loginWindow()
+    w.login_success_signal.connect(on_login_success)
     w.show()
     app.exec_()

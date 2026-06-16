@@ -41,8 +41,12 @@ class MainWindow(FluentWindow):
 
         # add items to navigation interface
         self.initNavigation()
-        self.splashScreen.finish()
+        
+        # self.splashScreen.finish()
 
+        # 延长2秒执行finish方法
+        QTimer.singleShot(1500, self.splashScreen.finish)
+        
         # start theme listener
         self.themeListener.start()
 
@@ -75,12 +79,12 @@ class MainWindow(FluentWindow):
 
         # create splash screen
         
-        # self.splashIcon = QIcon(':/gallery/images/splash_img.png')
-        # # 实例化
-        # self.splashScreen = SplashScreen(self.splashIcon, self)
-        # self.splashScreen.setIconSize(QSize(960, 580))
-        self.splashScreen = SplashScreen(self.windowIcon(), self)
-        self.splashScreen.setIconSize(QSize(106, 106))
+        self.splashIcon = QIcon(':/gallery/images/splash_img.png')
+        # 实例化
+        self.splashScreen = SplashScreen(self.splashIcon, self)
+        self.splashScreen.setIconSize(QSize(1080, 890))
+        # self.splashScreen = SplashScreen(self.windowIcon(), self)
+        # self.splashScreen.setIconSize(QSize(106, 106))
         self.splashScreen.raise_()
 
         desktop = QApplication.desktop().availableGeometry()
